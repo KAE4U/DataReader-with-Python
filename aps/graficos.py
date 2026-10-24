@@ -23,8 +23,10 @@ try:
     import matplotlib.pyplot as plt
     from matplotlib.ticker import FuncFormatter
     MATPLOTLIB_OK = True
-except ImportError:                       # pragma: no cover
+    MATPLOTLIB_ERRO = ""
+except Exception as _e:                   # ImportError, ou SystemError de NumPy incompatível
     MATPLOTLIB_OK = False
+    MATPLOTLIB_ERRO = f"{type(_e).__name__}: {_e}"
 
 _MARCADORES = ["o", "s", "^", "D", "v", "P", "X"]
 
@@ -61,7 +63,9 @@ def gerar_todos(resultados: List[ResultadoTeste], pasta: Path = config.DIR_GRAFI
                 subtitulo: str = "") -> List[Path]:
     """Gera todos os gráficos e retorna a lista de arquivos criados."""
     if not MATPLOTLIB_OK:
-        raise RuntimeError("matplotlib não está instalado. Execute: pip install -r requirements.txt")
+        raise RuntimeError(f"Gráficos desativados: não foi possível carregar o matplotlib "
+                           f"({MATPLOTLIB_ERRO}). Use Python 3.12/3.13 e rode "
+                           f"'pip install -r requirements.txt'.")
     if not any(r.status == OK for r in resultados):
         return []
     pasta = Path(pasta)
