@@ -1,9 +1,8 @@
 """
 Geração de gráficos (matplotlib) a partir dos resultados.
 
-Gráficos gerados:
-  1. linha_<cenario>.png      Tamanho do vetor x Tempo (escala linear e logarítmica)
-  2. barras_<cenario>.png     Barras agrupadas por tamanho, uma barra por algoritmo
+Gera um único gráfico de barras (escala linear): Quantidade de dados x Tempo de
+ordenação, com uma barra por algoritmo (grafico_barras.png, ou .svg sem matplotlib).
 """
 
 from __future__ import annotations
@@ -20,18 +19,13 @@ try:
     import matplotlib
     matplotlib.use("Agg")                 # renderiza em arquivo, sem janela
     import matplotlib.pyplot as plt
-    from matplotlib.ticker import FuncFormatter
     MATPLOTLIB_OK = True
     MATPLOTLIB_ERRO = ""
 except Exception as _e:                   # ImportError, ou SystemError de NumPy incompatível
     MATPLOTLIB_OK = False
     MATPLOTLIB_ERRO = f"{type(_e).__name__}: {_e}"
 
-_MARCADORES = ["o", "s", "^", "D", "v", "P", "X"]
-
-
-def _fmt_eixo_n():
-    return FuncFormatter(lambda x, _p: config.fmt_int(int(x)))
+TITULO = "Tempo de ordenação por algoritmo e quantidade de dados"
 
 
 def _series(resultados: List[ResultadoTeste]) -> Dict[Tuple[str, str], List[Tuple[int, float]]]:
@@ -82,53 +76,29 @@ def gerar_todos(resultados: List[ResultadoTeste], pasta: Path = config.DIR_GRAFI
                 mapa = dict(series.get((cen, ch), []))
                 dados_svg[algoritmos.obter(ch).nome] = [mapa.get(n) for n in tamanhos]
             arquivos.append(grafico_svg.barras_svg(
-                pasta / f"barras_{cen}.svg", tamanhos, dados_svg,
-                f"Tempo de ordenação - {config.NOMES_CENARIOS[cen]}"))
+                pasta / "grafico_barras.svg", tamanhos, dados_svg, TITULO))
         return arquivos
 
-    # 1) Linhas: Tamanho x Tempo por cenário (linear + log)
-    for cen in cenarios:
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5.5))
-        for i, ch in enumerate(chaves):
-            pts = series.get((cen, ch))
-            if not pts:
-                continue
-            xs, ys = zip(*pts)
-            for ax in (ax1, ax2):
-                ax.plot(xs, ys, marker=_MARCADORES[i % len(_MARCADORES)],
-                        label=algoritmos.obter(ch).nome, linewidth=1.8)
-        for ax, titulo in ((ax1, "Escala linear"), (ax2, "Escala logarítmica")):
-            ax.set_title(titulo)
-            ax.set_xlabel("Tamanho do vetor (n)")
-            ax.set_ylabel("Tempo de ordenação (s)")
-            ax.xaxis.set_major_formatter(_fmt_eixo_n())
-            ax.grid(True, alpha=0.3)
-        ax2.set_yscale("log")
-        ax1.legend(fontsize=8)
-        fig.suptitle(f"Tamanho x Tempo - Cenário: {config.NOMES_CENARIOS[cen]}"
-                     + (f"\n{subtitulo}" if subtitulo else ""), fontsize=11)
-        arquivos.append(_salvar(fig, pasta / f"linha_{cen}.png"))
-
-    # 2) Barras agrupadas por tamanho
+    # Gráfico de barras: Quantidade de dados x Tempo de ordenação (escala linear)
     for cen in cenarios:
         tamanhos = sorted({n for (c, _), pts in series.items() if c == cen for n, _ in pts})
         presentes = [ch for ch in chaves if series.get((cen, ch))]
         largura = 0.8 / max(1, len(presentes))
-        fig, ax = plt.subplots(figsize=(12, 5.5))
+        fig, ax = plt.subplots(figsize=(11, 6))
         for i, ch in enumerate(presentes):
             mapa = dict(series[(cen, ch)])
             xs = [j + i * largura for j in range(len(tamanhos))]
             ys = [mapa.get(n, 0) for n in tamanhos]
-            ax.bar(xs, ys, width=largura, label=algoritmos.obter(ch).nome)
+            barras = ax.bar(xs, ys, width=largura, label=algoritmos.obter(ch).nome)
+            ax.bar_label(barras, labels=[f"{t:.3f}".replace(".", ",") for t in ys],
+                         fontsize=7, padding=2)
         ax.set_xticks([j + largura * (len(presentes) - 1) / 2 for j in range(len(tamanhos))])
         ax.set_xticklabels([config.fmt_int(n) for n in tamanhos])
-        ax.set_yscale("log")
-        ax.set_xlabel("Tamanho do vetor (n)")
-        ax.set_ylabel("Tempo de ordenação (s) - escala log")
-        ax.set_title(f"Comparativo por tamanho - {config.NOMES_CENARIOS[cen]}"
-                     + (f"\n{subtitulo}" if subtitulo else ""), fontsize=11)
+        ax.set_xlabel("Quantidade de dados")
+        ax.set_ylabel("Tempo de ordenação (s)")
+        ax.set_title(TITULO)
         ax.grid(True, axis="y", alpha=0.3)
-        ax.legend(fontsize=8)
-        arquivos.append(_salvar(fig, pasta / f"barras_{cen}.png"))
+        ax.legend()
+        arquivos.append(_salvar(fig, pasta / "grafico_barras.png"))
 
     return arquivos

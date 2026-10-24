@@ -169,9 +169,9 @@ class Algoritmo:
 ALGORITMOS = {
     a.chave: a
     for a in (
-        Algoritmo("shell", "Shell Sort", shell_sort, "O(n log n)", "~O(n^1,3)", "~O(n^1,5)", "O(1)", False),
-        Algoritmo("merge", "Merge Sort", merge_sort, "O(n)*", "O(n log n)", "O(n log n)", "O(n)", True),
         Algoritmo("quick", "Quick Sort", quick_sort, "O(n log n)", "O(n log n)", "O(n²)**", "O(log n)", False),
+        Algoritmo("merge", "Merge Sort", merge_sort, "O(n)*", "O(n log n)", "O(n log n)", "O(n)", True),
+        Algoritmo("shell", "Shell Sort", shell_sort, "O(n log n)", "~O(n^1,3)", "~O(n^1,5)", "O(1)", False),
     )
 }
 # *  Com a verificação 'v[meio-1] <= v[meio]' o Merge Sort é linear em dados já ordenados.
