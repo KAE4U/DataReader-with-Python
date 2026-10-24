@@ -199,8 +199,7 @@ def _menu_teste_individual(cfg: Configuracao) -> None:
         print(f"\n[ERRO] {e}")
         return
 
-    cenario = escolher_um("Disposição dos dados:", list(config.CENARIOS),
-                          [config.NOMES_CENARIOS[c] for c in config.CENARIOS])
+    cenario = "aleatorio"
     entrada = dados.aplicar_cenario(base, cenario)
     chaves = escolher_varios("Algoritmos:", algoritmos.ORDEM_ALGORITMOS,
                              [a.nome for a in algoritmos.ALGORITMOS.values()], cfg.algoritmos)
@@ -265,8 +264,6 @@ def _menu_configuracoes(cfg: Configuracao) -> None:
     cfg.algoritmos = escolher_varios("Algoritmos:", algoritmos.ORDEM_ALGORITMOS,
                                      [f"{a.nome} - {a.medio}" for a in algoritmos.ALGORITMOS.values()],
                                      cfg.algoritmos)
-    cfg.cenarios = escolher_varios("Cenários:", list(config.CENARIOS),
-                                   [config.NOMES_CENARIOS[c] for c in config.CENARIOS], cfg.cenarios)
     tams = [str(n) for n in config.TAMANHOS_PADRAO]
     cfg.tamanhos = [int(t) for t in escolher_varios(
         "Tamanhos:", tams, [config.fmt_int(n) for n in config.TAMANHOS_PADRAO],

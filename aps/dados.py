@@ -3,7 +3,7 @@ Aquisição de dados (NÃO entra na medição de tempo).
 
 Fontes internas : geração aleatória em memória e digitação pelo usuário.
 Fontes externas : leitura de arquivos .txt ou .csv previamente armazenados.
-Cenários        : aleatório, já ordenado, invertido e semi-ordenado.
+Cenário         : dados aleatórios (desordenados).
 """
 
 from __future__ import annotations
@@ -59,40 +59,17 @@ def interpretar_entrada_manual(texto: str) -> List[int]:
 
 
 # ===========================================================================
-# Cenários (disposição dos dados)
+# Cenário (disposição dos dados)
 # ===========================================================================
-def aplicar_cenario(base: List[int], cenario: str, semente: Optional[int] = None) -> List[int]:
+def aplicar_cenario(base: List[int], cenario: str = "aleatorio",
+                    semente: Optional[int] = None) -> List[int]:
     """
-    Retorna uma NOVA lista com a disposição solicitada, a partir dos dados base.
-    A lista base nunca é alterada.
+    Retorna uma NOVA lista (cópia) com os dados na ordem aleatória em que foram
+    gerados/lidos. A lista base nunca é alterada.
     """
     if cenario == "aleatorio":
         return list(base)
-    if cenario == "ordenado":
-        return sorted(base)
-    if cenario == "invertido":
-        return sorted(base, reverse=True)
-    if cenario == "semi_ordenado":
-        return semi_ordenar(base, config.PERC_DESORDEM_SEMI, semente)
     raise ErroDados(f"Cenário desconhecido: {cenario}. Válidos: {', '.join(config.CENARIOS)}")
-
-
-def semi_ordenar(base: List[int], perc: float, semente: Optional[int] = None) -> List[int]:
-    """
-    Ordena os dados e depois troca pares de posições aleatórias, de modo que
-    aproximadamente 'perc' dos elementos fique fora do lugar.
-    Ex.: perc=0.10 -> ~90% dos elementos já estão na posição final.
-    """
-    v = sorted(base)
-    n = len(v)
-    if n < 2:
-        return v
-    rng = random.Random(semente)
-    trocas = max(1, int(n * perc / 2))  # cada troca desloca 2 elementos
-    for _ in range(trocas):
-        i, j = rng.randrange(n), rng.randrange(n)
-        v[i], v[j] = v[j], v[i]
-    return v
 
 
 # ===========================================================================

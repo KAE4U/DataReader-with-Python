@@ -21,18 +21,9 @@ VALOR_MAX = 99_999
 # Tamanhos de amostra exigidos pelo enunciado
 TAMANHOS_PADRAO = (1_000, 10_000, 50_000, 80_000, 100_000)
 
-# Disposições (cenários) dos dados
-CENARIOS = ("aleatorio", "ordenado", "invertido", "semi_ordenado")
-NOMES_CENARIOS = {
-    "aleatorio": "Aleatório",
-    "ordenado": "Já ordenado",
-    "invertido": "Invertido (decrescente)",
-    "semi_ordenado": "Semi-ordenado",
-}
-
-# Percentual de elementos deslocados no cenário semi-ordenado
-# (10% => ~90% dos elementos já estão na posição final)
-PERC_DESORDEM_SEMI = 0.10
+# Disposição dos dados: apenas aleatórios (dados desordenados, como no enunciado)
+CENARIOS = ("aleatorio",)
+NOMES_CENARIOS = {"aleatorio": "Aleatório"}
 
 # Semente padrão: garante que máquinas diferentes ordenem EXATAMENTE os mesmos dados
 SEMENTE_PADRAO = 2026
