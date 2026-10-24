@@ -29,10 +29,10 @@ Use o **Python 3.12 ou 3.13**. A única biblioteca externa é o `matplotlib`.
 python aps_simples.py
 ```
 - Ordena 1.000, 10.000, 50.000, 80.000 e 100.000 números aleatórios.
-- Usa **Insertion Sort, Merge Sort, Heap Sort e Quick Sort**.
+- Usa os **3 algoritmos mais rápidos** dos nossos testes: **Quick Sort, Merge Sort e Shell Sort**.
 - Mostra o tempo de cada algoritmo para cada quantidade de dados.
 - Gera `resultados_simples.csv` (abre no Excel) e `grafico_barras.png`.
-- Leva **uns 4 minutos**, quase tudo por causa do Insertion Sort com 80 mil e 100 mil elementos. Não é travamento.
+- Roda em **poucos segundos**.
 
 O cronômetro (`time.perf_counter()`) mede **só a ordenação**. O tempo de gerar os dados não entra.
 
@@ -46,9 +46,7 @@ Além do que a versão simples faz, ela tem:
 - leitura de arquivos `.txt` e `.csv` (`python main.py --gerar-arquivos` cria os arquivos de exemplo em `dados/`);
 - entrada de valores digitados pelo usuário;
 - listagem dos valores antes e depois da ordenação;
-- os algoritmos Bubble Sort e Shell Sort, e o Timsort nativo do Python como referência;
 - repetições com média, mínimo e máximo;
-- tempo limite para os algoritmos lentos;
 - histórico em CSV e vários gráficos, salvos em `resultados/`.
 
 ---
@@ -59,23 +57,34 @@ Medido em um Intel Xeon Platinum 8488C com Python 3.11. **Cada membro deve rodar
 
 | Algoritmo | 1.000 | 10.000 | 50.000 | 80.000 | 100.000 |
 |---|---|---|---|---|---|
-| Insertion Sort | 0,0107 s | 1,1404 s | 28,93 s | 81,75 s | 133,79 s |
-| Merge Sort | 0,0012 s | 0,0150 s | 0,0869 s | 0,1535 s | 0,1905 s |
-| Heap Sort | 0,0013 s | 0,0177 s | 0,1076 s | 0,1872 s | 0,2491 s |
-| Quick Sort | 0,0007 s | 0,0075 s | 0,0460 s | 0,0731 s | 0,0925 s |
+| Quick Sort | 0,0007 s | 0,0076 s | 0,0451 s | 0,0732 s | 0,0984 s |
+| Merge Sort | 0,0012 s | 0,0147 s | 0,0852 s | 0,1490 s | 0,1899 s |
+| Shell Sort | 0,0008 s | 0,0118 s | 0,0769 s | 0,1479 s | 0,2033 s |
 
 ![Gráfico de barras](grafico_barras.png)
 
-O eixo Y do gráfico está em escala logarítmica. Sem ela, as barras dos algoritmos rápidos ficariam invisíveis perto das do Insertion Sort.
+## Por que esses 3 algoritmos?
+
+Testamos 6 algoritmos (Bubble, Insertion, Shell, Heap, Merge e Quick) nos 4 cenários com 100.000 elementos e mantivemos os 3 com a menor soma de tempos:
+
+| Algoritmo | Aleatório | Já ordenado | Invertido | Semi-ordenado | Soma |
+|---|---|---|---|---|---|
+| **Quick Sort** | 115,9 ms | 67,6 ms | 84,8 ms | 88,3 ms | **356,6 ms** |
+| **Merge Sort** | 150,3 ms | 15,5 ms | 101,0 ms | 104,5 ms | **371,2 ms** |
+| **Shell Sort** | 190,6 ms | 60,4 ms | 93,8 ms | 143,4 ms | **488,3 ms** |
+| Heap Sort | 197,4 ms | 175,0 ms | 163,5 ms | 174,8 ms | 710,7 ms |
+| Insertion Sort | > 60 s | 6,3 ms | > 60 s | 14,3 s | — |
+| Bubble Sort | > 60 s | 3,7 ms | > 60 s | > 60 s | — |
+
+Bubble e Insertion são O(n²): passaram de 60 segundos com dados aleatórios e invertidos. O Heap Sort é O(n log n), mas foi o mais lento dos quatro restantes em todos os cenários.
 
 ## Algoritmos
 
 | Algoritmo | Melhor caso | Caso médio | Pior caso | Memória extra |
 |---|---|---|---|---|
-| Insertion Sort | O(n) | O(n²) | O(n²) | O(1) |
-| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) |
-| Heap Sort | O(n log n) | O(n log n) | O(n log n) | O(1) |
 | Quick Sort | O(n log n) | O(n log n) | O(n²) | O(log n) |
+| Merge Sort | O(n log n) | O(n log n) | O(n log n) | O(n) |
+| Shell Sort | O(n log n) | ~O(n^1,3) | ~O(n^1,5) | O(1) |
 
 ## Estrutura do projeto
 ```

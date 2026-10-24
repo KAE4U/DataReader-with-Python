@@ -1,20 +1,17 @@
 """
 Implementações dos algoritmos de ordenação.
 
+Foram mantidos os 3 algoritmos de MELHOR DESEMPENHO na bateria completa de testes
+(soma dos tempos médios nos 4 cenários com n = 100.000):
+    1º Quick Sort   O(n log n)   não estável  (mediana de três + Hoare, iterativo)
+    2º Merge Sort   O(n log n)   estável
+    3º Shell Sort   ~O(n^1.3)    não estável  (sequência de Ciura)
+
 Convenções:
     * Todas as funções ordenam a lista IN-PLACE, em ordem crescente, e retornam None.
-    * Nenhuma função usa list.sort()/sorted() internamente (exceto a referência Timsort).
+    * Nenhuma função usa list.sort()/sorted() internamente.
     * Implementações iterativas foram preferidas onde a recursão poderia estourar
       o limite de pilha do Python (ex.: Quick Sort em dados já ordenados).
-
-Algoritmos (do mais lento ao mais rápido, em média):
-    Bubble Sort     O(n²)        estável
-    Insertion Sort  O(n²)        estável
-    Shell Sort      ~O(n^1.3)    não estável  (sequência de Ciura)
-    Heap Sort       O(n log n)   não estável
-    Merge Sort      O(n log n)   estável
-    Quick Sort      O(n log n)   não estável  (mediana de três + Hoare, iterativo)
-    Timsort nativo  O(n log n)   estável      (referência: list.sort() em C)
 """
 
 from __future__ import annotations
@@ -24,48 +21,7 @@ from typing import Callable, List
 
 
 # ===========================================================================
-# 1. BUBBLE SORT (otimizado)
-# ===========================================================================
-def bubble_sort(v: List[int]) -> None:
-    """
-    Compara pares adjacentes e os troca quando fora de ordem; a cada passagem
-    o maior elemento restante "flutua" para o final.
-
-    Otimizações clássicas:
-      * guarda a posição da última troca: tudo depois dela já está ordenado,
-        então a próxima passagem pode parar ali;
-      * se nenhuma troca ocorrer, o vetor está ordenado (melhor caso O(n)).
-    """
-    limite = len(v) - 1
-    while limite > 0:
-        ultima_troca = 0
-        for i in range(limite):
-            if v[i] > v[i + 1]:
-                v[i], v[i + 1] = v[i + 1], v[i]
-                ultima_troca = i
-        limite = ultima_troca  # 0 => nenhuma troca => fim
-
-
-# ===========================================================================
-# 2. INSERTION SORT
-# ===========================================================================
-def insertion_sort(v: List[int]) -> None:
-    """
-    Mantém o prefixo v[0..i-1] ordenado e insere v[i] na posição correta,
-    deslocando para a direita os elementos maiores (como ordenar cartas na mão).
-    Muito eficiente para vetores pequenos ou quase ordenados (adaptativo).
-    """
-    for i in range(1, len(v)):
-        chave = v[i]
-        j = i - 1
-        while j >= 0 and v[j] > chave:
-            v[j + 1] = v[j]
-            j -= 1
-        v[j + 1] = chave
-
-
-# ===========================================================================
-# 3. SHELL SORT (sequência de lacunas de Ciura, 2001)
+# 1. SHELL SORT (sequência de lacunas de Ciura, 2001)
 # ===========================================================================
 _GAPS_CIURA = (1, 4, 10, 23, 57, 132, 301, 701, 1750)
 
@@ -96,7 +52,7 @@ def shell_sort(v: List[int]) -> None:
 
 
 # ===========================================================================
-# 4. MERGE SORT (top-down, buffer auxiliar único)
+# 2. MERGE SORT (top-down, buffer auxiliar único)
 # ===========================================================================
 def merge_sort(v: List[int]) -> None:
     """
@@ -139,41 +95,7 @@ def _merge_sort_rec(v: List[int], aux: List[int], ini: int, fim: int) -> None:
 
 
 # ===========================================================================
-# 5. HEAP SORT
-# ===========================================================================
-def heap_sort(v: List[int]) -> None:
-    """
-    1) Constrói um max-heap no próprio vetor (O(n)).
-    2) Repetidamente troca a raiz (maior) com o último elemento do heap,
-       reduz o heap e restaura a propriedade com 'sift-down' (O(log n)).
-    Garantia O(n log n) em todos os casos e memória O(1).
-    """
-    n = len(v)
-    for i in range(n // 2 - 1, -1, -1):
-        _sift_down(v, i, n)
-    for fim in range(n - 1, 0, -1):
-        v[0], v[fim] = v[fim], v[0]
-        _sift_down(v, 0, fim)
-
-
-def _sift_down(v: List[int], i: int, n: int) -> None:
-    """Desce v[i] no heap v[0:n] até que seja maior que seus filhos."""
-    valor = v[i]
-    while True:
-        filho = 2 * i + 1
-        if filho >= n:
-            break
-        if filho + 1 < n and v[filho + 1] > v[filho]:
-            filho += 1
-        if v[filho] <= valor:
-            break
-        v[i] = v[filho]   # sobe o filho (evita trocas completas)
-        i = filho
-    v[i] = valor
-
-
-# ===========================================================================
-# 6. QUICK SORT (iterativo, mediana de três, partição de Hoare)
+# 3. QUICK SORT (iterativo, mediana de três, partição de Hoare)
 # ===========================================================================
 def quick_sort(v: List[int]) -> None:
     """
@@ -230,14 +152,6 @@ def _particao_hoare(v: List[int], ini: int, fim: int) -> int:
 
 
 # ===========================================================================
-# 7. REFERÊNCIA: Timsort nativo do Python (implementado em C)
-# ===========================================================================
-def timsort_nativo(v: List[int]) -> None:
-    """Linha de base: list.sort() (Timsort, em C). Não é implementação do grupo."""
-    v.sort()
-
-
-# ===========================================================================
 # Registro dos algoritmos + metadados (usados em tabelas, gráficos e menu)
 # ===========================================================================
 @dataclass(frozen=True)
@@ -250,19 +164,14 @@ class Algoritmo:
     pior: str
     memoria: str
     estavel: bool
-    referencia: bool = False   # True = não é implementação própria
 
 
 ALGORITMOS = {
     a.chave: a
     for a in (
-        Algoritmo("bubble", "Bubble Sort", bubble_sort, "O(n)", "O(n²)", "O(n²)", "O(1)", True),
-        Algoritmo("insertion", "Insertion Sort", insertion_sort, "O(n)", "O(n²)", "O(n²)", "O(1)", True),
         Algoritmo("shell", "Shell Sort", shell_sort, "O(n log n)", "~O(n^1,3)", "~O(n^1,5)", "O(1)", False),
-        Algoritmo("heap", "Heap Sort", heap_sort, "O(n log n)", "O(n log n)", "O(n log n)", "O(1)", False),
         Algoritmo("merge", "Merge Sort", merge_sort, "O(n)*", "O(n log n)", "O(n log n)", "O(n)", True),
         Algoritmo("quick", "Quick Sort", quick_sort, "O(n log n)", "O(n log n)", "O(n²)**", "O(log n)", False),
-        Algoritmo("timsort", "Timsort nativo (ref.)", timsort_nativo, "O(n)", "O(n log n)", "O(n log n)", "O(n)", True, True),
     )
 }
 # *  Com a verificação 'v[meio-1] <= v[meio]' o Merge Sort é linear em dados já ordenados.

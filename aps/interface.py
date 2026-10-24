@@ -205,10 +205,6 @@ def _menu_teste_individual(cfg: Configuracao) -> None:
     chaves = escolher_varios("Algoritmos:", algoritmos.ORDEM_ALGORITMOS,
                              [a.nome for a in algoritmos.ALGORITMOS.values()], cfg.algoritmos)
 
-    if len(entrada) > 20_000 and any(c in ("bubble", "insertion") for c in chaves):
-        print(f"  [i] Atenção: algoritmos O(n²) com {config.fmt_int(len(entrada))} elementos "
-              f"podem demorar (limite: {cfg.timeout or 'nenhum'} s).")
-
     print(f"\nANTES  ({config.fmt_int(len(entrada))} elementos): {dados.amostra_texto(entrada)}")
     resultados, ultima = [], None
     for ch in chaves:

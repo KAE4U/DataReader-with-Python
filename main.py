@@ -8,7 +8,7 @@ Uso:
     python main.py --bateria interno     # bateria completa com dados gerados em memória
     python main.py --bateria externo     # bateria completa com arquivos de dados/
     python main.py --gerar-arquivos      # cria dados/satelite_<n>.txt/.csv
-    python main.py --bateria interno --tamanhos 1000 10000 --algoritmos quick merge heap
+    python main.py --bateria interno --tamanhos 1000 10000 --algoritmos quick merge
 """
 
 from __future__ import annotations
