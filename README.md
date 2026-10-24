@@ -13,7 +13,16 @@ git clone https://github.com/KAE4U/DataReader-with-Python.git
 cd DataReader-with-Python
 pip install -r requirements.txt
 ```
-Precisa ter o **Python 3.9 ou superior** instalado. A única biblioteca externa é o `matplotlib`.
+Use o **Python 3.12 ou 3.13**. A única biblioteca externa é o `matplotlib`.
+
+> **Erro `SystemError: module numpy._core._multiarray_umath uses unknown slot ID`?**
+> Isso acontece quando o NumPy instalado, que o matplotlib usa, não é compatível com a versão do Python. É comum com o Python 3.15, que é muito recente.
+> Correção: instale o [Python 3.13](https://www.python.org/downloads/) e use-o explicitamente:
+> ```bash
+> py -3.13 -m pip install -r requirements.txt
+> py -3.13 aps_simples.py
+> ```
+> Mesmo sem o matplotlib, o programa mede e mostra os tempos; só o gráfico deixa de ser gerado.
 
 ### 2. Versão simples (a que vamos usar na apresentação)
 ```bash

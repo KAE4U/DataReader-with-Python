@@ -10,10 +10,6 @@ import csv
 import random
 import time
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-
 TAMANHOS = [1_000, 10_000, 50_000, 80_000, 100_000]
 
 
@@ -115,7 +111,19 @@ def main():
         for nome, tempos in resultados.items():
             w.writerow([nome] + [f"{t:.6f}".replace(".", ",") for t in tempos])
 
+    print("\nSalvo: resultados_simples.csv")
+
     # Gráfico de barras: Tamanho x Tempo
+    # (matplotlib é importado só aqui: se falhar, os tempos e o CSV já foram gerados)
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except Exception as e:  # ImportError ou SystemError (NumPy incompatível com o Python)
+        print(f"\n[AVISO] Gráfico não gerado - falha ao carregar matplotlib: {type(e).__name__}: {e}")
+        print("        Use Python 3.12 ou 3.13 e rode: pip install -r requirements.txt")
+        return
+
     largura = 0.2
     fig, ax = plt.subplots(figsize=(11, 6))
     for k, (nome, tempos) in enumerate(resultados.items()):
@@ -131,7 +139,7 @@ def main():
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig("grafico_barras.png", dpi=150)
-    print("\nSalvo: resultados_simples.csv e grafico_barras.png")
+    print("Salvo: grafico_barras.png")
 
 
 if __name__ == "__main__":
