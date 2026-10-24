@@ -8,11 +8,12 @@ Gráficos gerados:
 
 from __future__ import annotations
 
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from . import algoritmos, config
+from . import algoritmos, config, grafico_svg
 from .benchmark import OK, ResultadoTeste
 
 try:
@@ -60,10 +61,6 @@ def _salvar(fig, destino: Path) -> Path:
 def gerar_todos(resultados: List[ResultadoTeste], pasta: Path = config.DIR_GRAFICOS,
                 subtitulo: str = "") -> List[Path]:
     """Gera todos os gráficos e retorna a lista de arquivos criados."""
-    if not MATPLOTLIB_OK:
-        raise RuntimeError(f"Gráficos desativados: não foi possível carregar o matplotlib "
-                           f"({MATPLOTLIB_ERRO}). Use Python 3.12/3.13 e rode "
-                           f"'pip install -r requirements.txt'.")
     if not any(r.status == OK for r in resultados):
         return []
     pasta = Path(pasta)
@@ -71,6 +68,23 @@ def gerar_todos(resultados: List[ResultadoTeste], pasta: Path = config.DIR_GRAFI
     chaves = _chaves_presentes(resultados)
     cenarios = [c for c in config.CENARIOS if any(k[0] == c for k in series)]
     arquivos = []
+
+    if not MATPLOTLIB_OK:
+        # Alternativa sem dependências: gráfico de barras em SVG (Python puro)
+        print(f"[AVISO] matplotlib indisponível ({MATPLOTLIB_ERRO}).\n"
+              f"        Python em uso: {sys.executable}\n"
+              f"        Para PNG, instale nele: \"{sys.executable}\" -m pip install -r requirements.txt\n"
+              f"        Gerando gráfico de barras em SVG (sem dependências)...")
+        for cen in cenarios:
+            tamanhos = sorted({n for (c, _), pts in series.items() if c == cen for n, _ in pts})
+            dados_svg = {}
+            for ch in chaves:
+                mapa = dict(series.get((cen, ch), []))
+                dados_svg[algoritmos.obter(ch).nome] = [mapa.get(n) for n in tamanhos]
+            arquivos.append(grafico_svg.barras_svg(
+                pasta / f"barras_{cen}.svg", tamanhos, dados_svg,
+                f"Tempo de ordenação - {config.NOMES_CENARIOS[cen]}"))
+        return arquivos
 
     # 1) Linhas: Tamanho x Tempo por cenário (linear + log)
     for cen in cenarios:

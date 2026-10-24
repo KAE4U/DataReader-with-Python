@@ -9,7 +9,10 @@ Uso:  python aps_simples.py
 
 import csv
 import random
+import sys
 import time
+
+from aps import grafico_svg   # gráfico de barras sem matplotlib (SVG e terminal)
 
 TAMANHOS = [1_000, 10_000, 50_000, 80_000, 100_000]
 
@@ -104,15 +107,23 @@ def main():
 
     print("\nSalvo: resultados_simples.csv")
 
-    # Gráfico de barras: Tamanho x Tempo
-    # (matplotlib é importado só aqui: se falhar, os tempos e o CSV já foram gerados)
+    # Gráfico de barras no próprio terminal (não depende de nenhuma biblioteca)
+    print("\nGráfico de barras (tempo em segundos):")
+    print(grafico_svg.barras_texto(TAMANHOS, resultados))
+
+    # Gráfico de barras em imagem: Tamanho x Tempo
+    # (matplotlib é importado só aqui; se falhar, gera o gráfico em SVG com Python puro)
     try:
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
     except Exception as e:  # ImportError ou SystemError (NumPy incompatível com o Python)
-        print(f"\n[AVISO] Gráfico não gerado - falha ao carregar matplotlib: {type(e).__name__}: {e}")
-        print("        Use Python 3.12 ou 3.13 e rode: pip install -r requirements.txt")
+        print(f"\n[AVISO] matplotlib indisponível ({type(e).__name__}: {e}).")
+        print(f"        Python em uso: {sys.executable}")
+        print(f"        Para PNG, instale nele: \"{sys.executable}\" -m pip install -r requirements.txt")
+        print("        Gerando o gráfico em SVG sem dependências...")
+        grafico_svg.barras_svg("grafico_barras.svg", TAMANHOS, resultados)
+        print("Salvo: grafico_barras.svg  (abra no navegador ou insira no Word)")
         return
 
     largura = 0.25

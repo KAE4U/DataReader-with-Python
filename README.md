@@ -22,7 +22,9 @@ Use o **Python 3.12 ou 3.13**. A única biblioteca externa é o `matplotlib`.
 > py -3.13 -m pip install -r requirements.txt
 > py -3.13 aps_simples.py
 > ```
-> Mesmo sem o matplotlib, o programa mede e mostra os tempos; só o gráfico deixa de ser gerado.
+> Mesmo sem o matplotlib, o programa mede e mostra os tempos e gera o gráfico de barras em **SVG** com Python puro. O SVG abre no navegador e pode ser inserido no Word.
+
+> **Importante:** rode **todos** os scripts com o mesmo Python (`py -3.13 main.py`, `py -3.13 aps_simples.py`). Se aparecer `No module named 'matplotlib'`, o aviso mostra qual Python está em uso e o comando para instalar nele. Evite usar `pip` sozinho: ele pode apontar para outro Python. Use `py -3.13 -m pip`.
 
 ### 2. Versão simples (a que vamos usar na apresentação)
 ```bash
