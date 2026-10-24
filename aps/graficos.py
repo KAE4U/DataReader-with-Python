@@ -4,8 +4,6 @@ Geração de gráficos (matplotlib) a partir dos resultados.
 Gráficos gerados:
   1. linha_<cenario>.png      Tamanho do vetor x Tempo (escala linear e logarítmica)
   2. barras_<cenario>.png     Barras agrupadas por tamanho, uma barra por algoritmo
-  3. comparativo_cenarios.png Algoritmo x Cenário no maior tamanho medido
-  4. linha_<algoritmo>.png    Um gráfico por algoritmo comparando os 4 cenários
 """
 
 from __future__ import annotations
@@ -118,51 +116,5 @@ def gerar_todos(resultados: List[ResultadoTeste], pasta: Path = config.DIR_GRAFI
         ax.grid(True, axis="y", alpha=0.3)
         ax.legend(fontsize=8)
         arquivos.append(_salvar(fig, pasta / f"barras_{cen}.png"))
-
-    # 3) Algoritmo x Cenário no maior n medido (barra ausente = timeout/ignorado)
-    validos = [r for r in resultados if r.status == OK]
-    n_max = max(r.tamanho for r in validos)
-    fig, ax = plt.subplots(figsize=(12, 5.5))
-    largura = 0.8 / max(1, len(cenarios))
-    for i, cen in enumerate(cenarios):
-        ys = []
-        for ch in chaves:
-            mapa = dict(series.get((cen, ch), []))
-            ys.append(mapa.get(n_max, 0))
-        ax.bar([j + i * largura for j in range(len(chaves))], ys, width=largura,
-               label=config.NOMES_CENARIOS[cen])
-    ax.set_xticks([j + largura * (len(cenarios) - 1) / 2 for j in range(len(chaves))])
-    ax.set_xticklabels([algoritmos.obter(c).nome for c in chaves], rotation=15)
-    ax.set_yscale("log")
-    ax.set_ylabel("Tempo de ordenação (s) - escala log")
-    ax.set_title(f"Influência da disposição dos dados (n={config.fmt_int(n_max)})"
-                 + "  |  barra ausente = excedeu o tempo limite"
-                 + (f"\n{subtitulo}" if subtitulo else ""), fontsize=11)
-    ax.grid(True, axis="y", alpha=0.3)
-    ax.legend(fontsize=8)
-    arquivos.append(_salvar(fig, pasta / "comparativo_cenarios.png"))
-
-    # 4) Um gráfico por algoritmo (4 cenários)
-    for ch in chaves:
-        fig, ax = plt.subplots(figsize=(8, 5))
-        tem = False
-        for i, cen in enumerate(cenarios):
-            pts = series.get((cen, ch))
-            if pts:
-                tem = True
-                xs, ys = zip(*pts)
-                ax.plot(xs, ys, marker=_MARCADORES[i % len(_MARCADORES)],
-                        label=config.NOMES_CENARIOS[cen])
-        if not tem:
-            plt.close(fig)
-            continue
-        ax.set_title(f"{algoritmos.obter(ch).nome} - Tamanho x Tempo por cenário"
-                     + (f"\n{subtitulo}" if subtitulo else ""), fontsize=11)
-        ax.set_xlabel("Tamanho do vetor (n)")
-        ax.set_ylabel("Tempo de ordenação (s)")
-        ax.xaxis.set_major_formatter(_fmt_eixo_n())
-        ax.grid(True, alpha=0.3)
-        ax.legend(fontsize=8)
-        arquivos.append(_salvar(fig, pasta / f"algoritmo_{ch}.png"))
 
     return arquivos

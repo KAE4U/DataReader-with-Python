@@ -2,7 +2,7 @@
 Implementações dos algoritmos de ordenação.
 
 Foram mantidos os 3 algoritmos de MELHOR DESEMPENHO na bateria completa de testes
-(soma dos tempos médios nos 4 cenários com n = 100.000):
+(tempo médio com n = 100.000 números aleatórios):
     1º Quick Sort   O(n log n)   não estável  (mediana de três + Hoare, iterativo)
     2º Merge Sort   O(n log n)   estável
     3º Shell Sort   ~O(n^1.3)    não estável  (sequência de Ciura)
