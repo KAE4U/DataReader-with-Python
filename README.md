@@ -42,7 +42,6 @@ python main.py                      # menu interativo
 python main.py --bateria interno    # todos os testes automaticamente
 ```
 Além do que a versão simples faz, ela tem:
-- 4 cenários: aleatório, já ordenado, invertido e semi-ordenado;
 - leitura de arquivos `.txt` e `.csv` (`python main.py --gerar-arquivos` cria os arquivos de exemplo em `dados/`);
 - entrada de valores digitados pelo usuário;
 - listagem dos valores antes e depois da ordenação;
@@ -57,26 +56,26 @@ Medido em um Intel Xeon Platinum 8488C com Python 3.11. **Cada membro deve rodar
 
 | Algoritmo | 1.000 | 10.000 | 50.000 | 80.000 | 100.000 |
 |---|---|---|---|---|---|
-| Quick Sort | 0,0007 s | 0,0076 s | 0,0451 s | 0,0732 s | 0,0984 s |
-| Merge Sort | 0,0012 s | 0,0147 s | 0,0852 s | 0,1490 s | 0,1899 s |
-| Shell Sort | 0,0008 s | 0,0118 s | 0,0769 s | 0,1479 s | 0,2033 s |
+| Quick Sort | 0,0007 s | 0,0075 s | 0,0446 s | 0,0729 s | 0,0953 s |
+| Merge Sort | 0,0012 s | 0,0147 s | 0,0858 s | 0,1537 s | 0,1851 s |
+| Shell Sort | 0,0008 s | 0,0124 s | 0,0769 s | 0,1435 s | 0,1930 s |
 
 ![Gráfico de barras](grafico_barras.png)
 
 ## Por que esses 3 algoritmos?
 
-Testamos 6 algoritmos (Bubble, Insertion, Shell, Heap, Merge e Quick) nos 4 cenários com 100.000 elementos e mantivemos os 3 com a menor soma de tempos:
+Testamos 6 algoritmos (Bubble, Insertion, Shell, Heap, Merge e Quick) com 100.000 números aleatórios e mantivemos os 3 mais rápidos:
 
-| Algoritmo | Aleatório | Já ordenado | Invertido | Semi-ordenado | Soma |
-|---|---|---|---|---|---|
-| **Quick Sort** | 115,9 ms | 67,6 ms | 84,8 ms | 88,3 ms | **356,6 ms** |
-| **Merge Sort** | 150,3 ms | 15,5 ms | 101,0 ms | 104,5 ms | **371,2 ms** |
-| **Shell Sort** | 190,6 ms | 60,4 ms | 93,8 ms | 143,4 ms | **488,3 ms** |
-| Heap Sort | 197,4 ms | 175,0 ms | 163,5 ms | 174,8 ms | 710,7 ms |
-| Insertion Sort | > 60 s | 6,3 ms | > 60 s | 14,3 s | — |
-| Bubble Sort | > 60 s | 3,7 ms | > 60 s | > 60 s | — |
+| Algoritmo | Tempo (100.000 aleatórios) |
+|---|---|
+| **Quick Sort** | **115,9 ms** |
+| **Merge Sort** | **150,3 ms** |
+| **Shell Sort** | **190,6 ms** |
+| Heap Sort | 197,4 ms |
+| Insertion Sort | > 60 s |
+| Bubble Sort | > 60 s |
 
-Bubble e Insertion são O(n²): passaram de 60 segundos com dados aleatórios e invertidos. O Heap Sort é O(n log n), mas foi o mais lento dos quatro restantes em todos os cenários.
+Bubble e Insertion são O(n²) e passaram de 60 segundos. O Heap Sort é O(n log n), mas ficou atrás dos outros três.
 
 ## Algoritmos
 

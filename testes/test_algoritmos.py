@@ -27,10 +27,8 @@ class TestAlgoritmos(unittest.TestCase):
         for caso in self.CASOS_FIXOS:
             self._verificar(caso)
 
-    def test_todos_os_cenarios(self):
-        base = dados.gerar_aleatorios(2_000, 42)
-        for cenario in config.CENARIOS:
-            self._verificar(dados.aplicar_cenario(base, cenario, 7))
+    def test_dados_aleatorios(self):
+        self._verificar(dados.gerar_aleatorios(2_000, 42))
 
     def test_muitos_repetidos(self):
         rng = random.Random(1)
@@ -52,11 +50,11 @@ class TestDados(unittest.TestCase):
         with self.assertRaises(dados.ErroDados):
             dados.interpretar_entrada_manual("1 abc 100000")
 
-    def test_semi_ordenado_mantem_elementos(self):
+    def test_cenario_aleatorio_nao_altera_base(self):
         base = dados.gerar_aleatorios(1_000, 3)
-        semi = dados.aplicar_cenario(base, "semi_ordenado", 3)
-        self.assertEqual(sorted(semi), sorted(base))
-        self.assertNotEqual(semi, sorted(base))
+        copia = dados.aplicar_cenario(base)
+        self.assertEqual(copia, base)
+        self.assertIsNot(copia, base)
 
 
 if __name__ == "__main__":
